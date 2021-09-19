@@ -1,29 +1,52 @@
 package com.gaur.composeplayground
 
 import android.os.Bundle
+import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.gaur.composeplayground.ui.theme.ComposePlaygroundTheme
+import com.gaur.composeplayground.ui.theme.Purple700
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ComposePlaygroundTheme {
                 Surface(color = MaterialTheme.colors.background) {
-                    ColumnExample()
+                    val navController = rememberNavController()
+                    NavHost(navController = navController, startDestination = "splash_screen") {
+                        composable("splash_screen") {
+                            SplashScreen(navController)
+                        }
+
+                        composable("main_screen") {
+                            MainScreen()
+
+                        }
+                    }
                 }
             }
         }
@@ -32,40 +55,62 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun ColumnExample() {
+fun SplashScreen(navController: NavController) {
 
-    Column(
+    val scale = remember {
+        androidx.compose.animation.core.Animatable(0f)
+    }
+
+    LaunchedEffect(key1 = true) {
+        scale.animateTo(
+            targetValue = 0.7f,
+            animationSpec = tween(
+                durationMillis = 800,
+                easing = {
+                    OvershootInterpolator(4f).getInterpolation(it)
+                })
+        )
+        delay(1500L)
+        navController.navigate("main_screen") {
+            popUpTo("splash_screen") {
+                inclusive = true
+            }
+        }
+    }
+
+    Box(
         modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding()
+            .fillMaxSize()
+            .background(Purple700)
     ) {
-
-
-        Card(modifier = Modifier.padding(8.dp)) {
-            Text(text = "first card", modifier = Modifier.padding(8.dp))
-        }
-
-        Card(modifier = Modifier.padding(8.dp)) {
-            Text(text = "sec card", modifier = Modifier.padding(8.dp))
-        }
-
-        Card(modifier = Modifier.padding(8.dp)) {
-            Text(text = "third card", modifier = Modifier.padding(8.dp))
-        }
-
-        Card(modifier = Modifier.padding(8.dp)) {
-            Text(text = "fourth card", modifier = Modifier.padding(8.dp))
-        }
-
-        Card(modifier = Modifier.padding(8.dp)) {
-            Text(text = "fifth card", modifier = Modifier.padding(8.dp))
-        }
-
+        Text(
+            text = "This is splash screen",
+            style = TextStyle(Color.White, fontSize = 28.sp),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .scale(scale.value)
+        )
     }
 
 
+}
+
+
+@Composable
+fun MainScreen() {
+    Box(
+        modifier = Modifier
+            .padding()
+            .fillMaxSize()
+
+    ) {
+        Text(
+            text = "Main Screen",
+            modifier = Modifier.align(Alignment.Center),
+            style = TextStyle(Color.Black, fontSize = 28.sp)
+        )
+    }
 }
 
 
@@ -74,7 +119,7 @@ fun ColumnExample() {
 
 
 
-
+                                                
 
 
 

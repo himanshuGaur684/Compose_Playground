@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -26,7 +26,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.gaur.composeplayground.ui.theme.ComposePlaygroundTheme
-import com.gaur.composeplayground.ui.theme.Purple700
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
@@ -36,41 +35,46 @@ class MainActivity : ComponentActivity() {
         setContent {
             ComposePlaygroundTheme {
                 Surface(color = MaterialTheme.colors.background) {
+
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "splash_screen") {
                         composable("splash_screen") {
-                            SplashScreen(navController)
+                            SplashScreen(navController = navController)
                         }
 
                         composable("main_screen") {
                             MainScreen()
-
                         }
+
                     }
+
+
                 }
             }
         }
     }
+
+
 }
 
 
 @Composable
 fun SplashScreen(navController: NavController) {
 
-    val scale = remember {
-        androidx.compose.animation.core.Animatable(0f)
-    }
+    val scale = remember { Animatable(0f) }
 
     LaunchedEffect(key1 = true) {
         scale.animateTo(
-            targetValue = 0.7f,
+            targetValue = 0.6f,
             animationSpec = tween(
-                durationMillis = 800,
+                durationMillis = 700,
                 easing = {
                     OvershootInterpolator(4f).getInterpolation(it)
-                })
+                }
+            )
         )
-        delay(1500L)
+
+        delay(2000)
         navController.navigate("main_screen") {
             popUpTo("splash_screen") {
                 inclusive = true
@@ -80,17 +84,18 @@ fun SplashScreen(navController: NavController) {
 
     Box(
         modifier = Modifier
-            .padding()
             .fillMaxSize()
-            .background(Purple700)
+            .background(Color.Blue)
     ) {
+
         Text(
-            text = "This is splash screen",
+            text = "Vision Android Hindi",
             style = TextStyle(Color.White, fontSize = 28.sp),
             modifier = Modifier
-                .align(Alignment.Center)
                 .scale(scale.value)
+                .align(Alignment.Center)
         )
+
     }
 
 
@@ -101,26 +106,19 @@ fun SplashScreen(navController: NavController) {
 fun MainScreen() {
     Box(
         modifier = Modifier
-            .padding()
             .fillMaxSize()
-
+            .background(Color.White)
     ) {
+
         Text(
             text = "Main Screen",
-            modifier = Modifier.align(Alignment.Center),
-            style = TextStyle(Color.Black, fontSize = 28.sp)
+            style = TextStyle(Color.Black, fontSize = 28.sp),
+            modifier = Modifier
+                .align(Alignment.Center)
         )
+
     }
 }
-
-
-
-
-
-
-
-                                                
-
 
 
 
